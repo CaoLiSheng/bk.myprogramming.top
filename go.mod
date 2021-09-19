@@ -1,4 +1,4 @@
-module go-gin-boilerplate
+module bk.myprogramming.top
 
 go 1.13
 

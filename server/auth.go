@@ -2,10 +2,11 @@ package srv
 
 import (
 	"errors"
-	"go-gin-boilerplate/cmd"
-	"go-gin-boilerplate/db"
 	"log"
 	"time"
+
+	"bk.myprogramming.top/cmd"
+	"bk.myprogramming.top/db"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"

@@ -1,19 +1,21 @@
 package srv
 
 import (
-	"go-gin-boilerplate/db"
 	"log"
 	"net/http"
+
+	"bk.myprogramming.top/db"
 
 	"github.com/gin-gonic/gin"
 )
 
 func (r *Result) Send(c *gin.Context) {
-	c.JSON(r.Code, r)
-
 	if r.Err != nil {
 		log.Println("error occurred:\n", r)
+		r.Message = r.Err.Error()
 	}
+
+	c.JSON(r.Code, r)
 }
 
 func Do(c *gin.Context, opts *db.JobOptions, job Job) (result *Result) {

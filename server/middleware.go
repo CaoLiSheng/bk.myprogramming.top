@@ -2,8 +2,9 @@ package srv
 
 import (
 	"errors"
-	"go-gin-boilerplate/db"
 	"net/http"
+
+	"bk.myprogramming.top/db"
 
 	"github.com/gin-gonic/gin"
 )

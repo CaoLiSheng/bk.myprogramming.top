@@ -1,9 +1,10 @@
 package test
 
 import (
-	"go-gin-boilerplate/db"
-	srv "go-gin-boilerplate/server"
 	"net/http"
+
+	"bk.myprogramming.top/db"
+	srv "bk.myprogramming.top/server"
 
 	"github.com/gin-gonic/gin"
 	sqlbuilder "github.com/huandu/go-sqlbuilder"

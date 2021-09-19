@@ -1,8 +1,8 @@
 package test
 
 import (
-	"go-gin-boilerplate/db"
-	srv "go-gin-boilerplate/server"
+	"bk.myprogramming.top/db"
+	srv "bk.myprogramming.top/server"
 
 	"github.com/gin-gonic/gin"
 )

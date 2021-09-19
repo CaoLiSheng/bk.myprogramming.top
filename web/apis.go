@@ -1,8 +1,9 @@
 package web
 
 import (
-	srv "go-gin-boilerplate/server"
-	"go-gin-boilerplate/web/test"
+	srv "bk.myprogramming.top/server"
+	"bk.myprogramming.top/web/blogDir"
+	"bk.myprogramming.top/web/test"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,5 +17,10 @@ func Setup(e *gin.Engine) {
 	super.Use(superAuth.MiddlewareFunc())
 	{
 		super.GET("/test", test.API)
+		super.GET("/dir/list", blogDir.List)
+		super.POST("/dir/add", blogDir.Add)
+		super.POST("/dir/remove", blogDir.Remove)
+		super.POST("/dir/modify", blogDir.Modify)
+		super.POST("/dir/solid", blogDir.Solid)
 	}
 }

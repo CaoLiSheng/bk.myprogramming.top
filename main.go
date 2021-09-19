@@ -3,16 +3,17 @@ package main
 import (
 	"context"
 	"fmt"
-	"go-gin-boilerplate/cmd"
-	"go-gin-boilerplate/db"
-	srv "go-gin-boilerplate/server"
-	"go-gin-boilerplate/utils"
-	"go-gin-boilerplate/web"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
+
+	"bk.myprogramming.top/cmd"
+	"bk.myprogramming.top/db"
+	srv "bk.myprogramming.top/server"
+	"bk.myprogramming.top/utils"
+	"bk.myprogramming.top/web"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
