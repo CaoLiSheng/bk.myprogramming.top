@@ -1,7 +1,6 @@
 package test
 
 import (
-	"bk.myprogramming.top/db"
 	srv "bk.myprogramming.top/server"
 
 	"github.com/gin-gonic/gin"
@@ -14,6 +13,6 @@ func API(c *gin.Context) {
 		return
 	}
 
-	srv.Do(c, db.NewJobOpts(true, true), handler(req))
+	srv.Do(c, srv.NewJobOpts(true, true), handler(req))
 }
 

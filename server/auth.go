@@ -69,11 +69,15 @@ func authenticator(tipe string) jwtAuthenticator {
 
 		var dbErr error
 		authenticator := authenticators[tipe]
-		MustGet(c).DoSimple(&db.JobOptions{Timeout: 5*time.Second}, func(c *db.Core) {
-			dbUser := authenticator(name, pwd)(c)
-			user.ID = dbUser.ID
-			user.Title = dbUser.Title
-		}, func(e error) { dbErr = e })
+		MustGet(c).DoSimple(&db.JobOptions{
+			Timeout: 5*time.Second,
+			Job: func(c *db.Core) {
+				dbUser := authenticator(name, pwd)(c)
+				user.ID = dbUser.ID
+				user.Title = dbUser.Title
+			},
+			Fail: func(e error) { dbErr = e },
+		})
 
 		if dbErr != nil {
 			return nil, dbErr
@@ -142,7 +146,11 @@ func authorizator(tipe string) jwtAuthorizator {
 		if u, ok := data.(*User); ok && u.Type == tipe {
 			var dbErr error
 			authorizator := authorizators[tipe]
-			MustGet(c).DoSimple(&db.JobOptions{Timeout: 5*time.Second}, authorizator(u), func(e error) { dbErr = e })
+			MustGet(c).DoSimple(&db.JobOptions{
+				Timeout: 5*time.Second,
+				Job: authorizator(u),
+				Fail: func(e error) { dbErr = e },
+			})
 
 			return dbErr == nil
 		}

@@ -18,20 +18,19 @@ func (r *Result) Send(c *gin.Context) {
 	c.JSON(r.Code, r)
 }
 
-func Do(c *gin.Context, opts *db.JobOptions, job Job) (result *Result) {
-	Job := func (core *db.Core) {
+func Do(c *gin.Context, opts *JobOptions, job Job) (result *Result) {
+	dbOpts := db.NewJobOpts(func (core *db.Core) {
 		result = job(core)
-	}
-	Fail := func (err error) {
+	}, func (err error) {
 		result = new(Result)
 		result.Code = http.StatusServiceUnavailable
 		result.Err = err
-	}
+	})
 
 	if opts.Simple {
-		MustGet(c).DoSimple(opts, Job, Fail)
+		MustGet(c).DoSimple(dbOpts)
 	} else {
-		MustGet(c).Do(opts, Job, Fail)
+		MustGet(c).Do(dbOpts)
 	}
 
 	if opts.Auto {
@@ -39,4 +38,8 @@ func Do(c *gin.Context, opts *db.JobOptions, job Job) (result *Result) {
 	}
 
 	return
+}
+
+func NewJobOpts(simple, auto bool) *JobOptions {
+	return &JobOptions{Simple: simple, Auto: auto}
 }

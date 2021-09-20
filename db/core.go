@@ -31,44 +31,41 @@ func (c *Core) Ping(timeout time.Duration) (err error) {
 	return
 }
 
-func (c *Core) Do(opts *JobOptions, job Job, fail Fail) {
+func (c *Core) Do(opts *JobOptions) {
 	ctx, cancel := context.WithTimeout(*c.Ctx, opts.Timeout)
 	defer cancel()
 
-	if opts.TxOpts == nil {
-		opts.TxOpts = &sql.TxOptions{}
-	}
 	txm, err := c.DB.BeginTxmx(ctx, opts.TxOpts)
 	if err != nil {
-		fail(err)
+		opts.Fail(err)
 		return
 	}
 
 	defer func() {
 		if err := recover(); err != nil {
 			txm.Rollback()
-			fail(fmt.Errorf("%v", err))
+			opts.Fail(fmt.Errorf("%v", err))
 		}
 	}()
 
-	job(&Core{DB: c.DB, Txm: txm, Ctx: &ctx})
+	opts.Job(&Core{DB: c.DB, Txm: txm, Ctx: &ctx})
 
 	txm.Commit()
 }
 
-func (c *Core) DoSimple(opts *JobOptions, job Job, fail Fail) {
+func (c *Core) DoSimple(opts *JobOptions) {
 	ctx, cancel := context.WithTimeout(*c.Ctx, opts.Timeout)
 	defer cancel()
 
 	defer func() {
 		if err := recover(); err != nil {
-			fail(fmt.Errorf("%v", err))
+			opts.Fail(fmt.Errorf("%v", err))
 		}
 	}()
 
-	job(&Core{DB: c.DB, Ctx: &ctx})
+	opts.Job(&Core{DB: c.DB, Ctx: &ctx})
 }
 
-func NewJobOpts(simple, auto bool) *JobOptions {
-	return &JobOptions{ Timeout: 5 * time.Second, Simple: simple, Auto: auto }
+func NewJobOpts(job Job, fail Fail) *JobOptions {
+	return &JobOptions{ Timeout: 5 * time.Second, TxOpts: &sql.TxOptions{}, Job: job, Fail: fail }
 }

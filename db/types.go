@@ -21,8 +21,8 @@ type Fail func(error)
 type JobOptions struct {
 	Timeout time.Duration
 	TxOpts  *sql.TxOptions
-	Simple  bool
-	Auto    bool
+	Job     Job
+	Fail    Fail
 }
 
 type PageReq struct {

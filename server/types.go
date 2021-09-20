@@ -10,3 +10,8 @@ type Result struct {
 }
 
 type Job func(*db.Core) *Result
+
+type JobOptions struct {
+	Simple bool
+	Auto   bool
+}
