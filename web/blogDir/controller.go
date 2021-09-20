@@ -2,9 +2,11 @@ package blogDir
 
 import (
 	"net/http"
+	"os"
 
 	"bk.myprogramming.top/db"
 	srv "bk.myprogramming.top/server"
+	"bk.myprogramming.top/web/blogCfg"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,7 +27,7 @@ func Add(c *gin.Context) {
 }
 
 func Remove(c *gin.Context) {
-	row := new(removeBlogDirRow)
+	row := new(blogDirRowId)
 	if srv.BadRequest(c, row) {return}
 
 	srv.Do(c, db.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
@@ -45,5 +47,20 @@ func Modify(c *gin.Context) {
 }
 
 func Solid(c *gin.Context) {
+	row := new(blogDirRowId)
+	if srv.BadRequest(c, row) {return}
 
+	srv.Do(c, db.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
+		dir := getBlogDir(c, row)
+		path := "/" + dir.Name
+		for dir.PID != 0 {
+			dir = getBlogDir(c, &blogDirRowId{ID:dir.PID})
+			path = "/" + dir.Name + path
+		}
+		postBase := blogCfg.GetBlogCfg(c, "post_base")
+
+		srv.IsPanic(os.MkdirAll(postBase + path, os.ModePerm))
+
+		return &srv.Result{Code: http.StatusOK}
+	})
 }

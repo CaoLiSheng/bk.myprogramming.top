@@ -25,3 +25,9 @@ func SendBadRequest(c *gin.Context, err error) {
 	result.Err = errors.New("请求参数错误【" + err.Error() + "】")
 	result.Send(c)
 }
+
+func IsPanic(err error) {
+	if err != nil {
+		panic(err)
+	}
+}

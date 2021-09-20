@@ -14,6 +14,6 @@ type addBlogDirRow struct {
 	Alias string `json:"alias" form:"alias" binding:"required"`
 }
 
-type removeBlogDirRow struct {
+type blogDirRowId struct {
 	ID    int64  `form:"id" binding:"required"`
 }

@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"bk.myprogramming.top/db"
+	srv "bk.myprogramming.top/server"
 	"github.com/huandu/go-sqlbuilder"
 )
 
@@ -11,15 +12,12 @@ func ListBlogDir(c *db.Core) []blogDirRow {
 	sql, args := sqlbuilder.NewSelectBuilder().Select("*").From("blog_dir").Build()
 	rows, err := c.DB.QueryxContext(*c.Ctx, sql, args...)
 
-	if err != nil {panic(err)}
+	srv.IsPanic(err)
 
 	data := make([]blogDirRow, 0)
 	for rows.Next() {
 		var row blogDirRow
-		err := rows.StructScan(&row)
-		if err != nil {
-			panic(err)
-		}
+		srv.IsPanic(rows.StructScan(&row))
 		data = append(data, row)
 	}
 
@@ -31,19 +29,19 @@ func addBlogDir(c *db.Core, row *addBlogDirRow) {
 	result := c.DB.MustExecContext(*c.Ctx, sql, args...)
 	id, err := result.LastInsertId()
 
-	if err != nil {panic(err)}
+	srv.IsPanic(err)
 
 	row.ID = id
 }
 
-func removeBlogDir(c *db.Core, row *removeBlogDirRow) {
+func removeBlogDir(c *db.Core, row *blogDirRowId) {
 	sb := sqlbuilder.NewDeleteBuilder().DeleteFrom("blog_dir")
 	sb.Where(sb.E("id", row.ID))
 	sql, args := sb.Build()
 	result := c.DB.MustExecContext(*c.Ctx, sql, args...)
 	ra, err := result.RowsAffected()
 
-	if err != nil {panic(err)}
+	srv.IsPanic(err)
 	if ra <= 0 {panic(errors.New("要删除的数据不存在！"))}
 }
 
@@ -54,6 +52,18 @@ func modifyBlogDir(c *db.Core, row *blogDirRow) {
 	result := c.DB.MustExecContext(*c.Ctx, sql, args...)
 	ra, err := result.RowsAffected()
 
-	if err != nil {panic(err)}
+	srv.IsPanic(err)
 	if ra <= 0 {panic(errors.New("要修改的数据不存在！"))}
+}
+
+func getBlogDir(c *db.Core, row *blogDirRowId) *blogDirRow {
+	sb := sqlbuilder.NewSelectBuilder().Select("*").From("blog_dir")
+	sb.Where(sb.E("id", row.ID))
+	sql, args := sb.Build()
+	rowx := c.DB.QueryRowxContext(*c.Ctx, sql, args...)
+
+	res := new(blogDirRow)
+	srv.IsPanic(rowx.StructScan(res))
+
+	return res
 }
