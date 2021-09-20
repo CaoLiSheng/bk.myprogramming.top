@@ -10,7 +10,28 @@ import (
 
 func List(c *gin.Context) {
 	srv.Do(c, db.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
-		return &srv.Result{Code: http.StatusOK, Results: listBlogCfg(c)}
+		data := make(BlogCfgRows, 0)
+		data.ListBlogCfg(c)
+		return &srv.Result{Code: http.StatusOK, Results: data}
 	})
 }
 
+func Replace(c *gin.Context) {
+	row := new(BlogCfgRow)
+	if srv.BadRequest(c, row) {return}
+
+	srv.Do(c, db.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
+		row.ReplaceBlogCfg(c)
+		return &srv.Result{Code: http.StatusOK}
+	})
+}
+
+func Remove(c *gin.Context) {
+	row := new(BlogCfgRowId)
+	if srv.BadRequest(c, row) {return}
+
+	srv.Do(c, db.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
+		row.RemoveBlogCfg(c)
+		return &srv.Result{Code: http.StatusOK}
+	})
+}

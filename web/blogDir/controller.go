@@ -12,52 +12,54 @@ import (
 
 func List(c *gin.Context) {
 	srv.Do(c, db.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
-		return &srv.Result{Code: http.StatusOK, Results: ListBlogDir(c)}
+		data := make(BlogDirRows, 0)
+		data.ListBlogDir(c)
+		return &srv.Result{Code: http.StatusOK, Results: data}
 	})
 }
 
 func Add(c *gin.Context) {
-	row := new(addBlogDirRow)
+	row := new(AddBlogDirRow)
 	if srv.BadRequest(c, row) {return}
 
 	srv.Do(c, db.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
-		addBlogDir(c, row)
+		row.AddBlogDir(c)
 		return &srv.Result{Code: http.StatusOK, Results: row}
 	})
 }
 
 func Remove(c *gin.Context) {
-	row := new(blogDirRowId)
+	row := new(BlogDirRowId)
 	if srv.BadRequest(c, row) {return}
 
 	srv.Do(c, db.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
-		removeBlogDir(c, row)
+		row.RemoveBlogDir(c)
 		return &srv.Result{Code: http.StatusOK}
 	})
 }
 
 func Modify(c *gin.Context) {
-	row := new(blogDirRow)
+	row := new(BlogDirRow)
 	if srv.BadRequest(c, row) {return}
 
 	srv.Do(c, db.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
-		modifyBlogDir(c, row)
+		row.ModifyBlogDir(c)
 		return &srv.Result{Code: http.StatusOK}
 	})
 }
 
 func Solid(c *gin.Context) {
-	row := new(blogDirRowId)
+	row := new(BlogDirRowId)
 	if srv.BadRequest(c, row) {return}
 
 	srv.Do(c, db.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
-		dir := getBlogDir(c, row)
+		dir := row.GetBlogDir(c)
 		path := "/" + dir.Name
 		for dir.PID != 0 {
-			dir = getBlogDir(c, &blogDirRowId{ID:dir.PID})
+			dir = (&BlogDirRowId{ID: dir.PID}).GetBlogDir(c)
 			path = "/" + dir.Name + path
 		}
-		postBase := blogCfg.GetBlogCfg(c, "post_base")
+		postBase := (&blogCfg.BlogCfgRowId{ID: "post_base"}).GetBlogCfg(c)
 
 		srv.IsPanic(os.MkdirAll(postBase + path, os.ModePerm))
 

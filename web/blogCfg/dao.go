@@ -6,28 +6,44 @@ import (
 	"github.com/huandu/go-sqlbuilder"
 )
 
-func listBlogCfg(c *db.Core) []blogCfgRow {
-	sql, args := sqlbuilder.NewSelectBuilder().Select("cfg").From("blog_cfg").Build()
+func (data *BlogCfgRows) ListBlogCfg(c *db.Core) {
+	sql, args := sqlbuilder.NewSelectBuilder().Select("*").From("blog_cfg").Build()
 	rows, err := c.DB.QueryxContext(*c.Ctx, sql, args...)
 	srv.IsPanic(err)
 
-	data := make([]blogCfgRow, 0)
 	for rows.Next() {
-		var row blogCfgRow
+		var row BlogCfgRow
 		srv.IsPanic(rows.StructScan(&row))
-		data = append(data, row)
+		*data = append(*data, row)
 	}
-	
-	return data
 }
 
-func GetBlogCfg(c *db.Core, id string) string {
+func (row *BlogCfgRowId) GetBlogCfg(c *db.Core) string {
 	sb := sqlbuilder.NewSelectBuilder().Select("cfg").From("blog_cfg")
-	sql, args := sb.Where(sb.E("id", id)).Build()
+	sql, args := sb.Where(sb.E("id", row.ID)).Build()
 	rowx := c.DB.QueryRowxContext(*c.Ctx, sql, args...)
 	
 	var res string
 	srv.IsPanic(rowx.Scan(&res))
 
 	return res
+}
+
+func (row *BlogCfgRow) ReplaceBlogCfg(c *db.Core) {
+	sql, args := sqlbuilder.NewInsertBuilder().ReplaceInto("blog_cfg").Cols("id", "cfg").Values(row.ID, row.Cfg).Build()
+	result := c.DB.MustExecContext(*c.Ctx, sql, args...)
+	ra, err := result.RowsAffected()
+
+	srv.IsPanic(err)
+	if ra <= 0 {panic("数据更新失败！")}
+}
+
+func (row *BlogCfgRowId) RemoveBlogCfg(c *db.Core) {
+	sb := sqlbuilder.NewDeleteBuilder().DeleteFrom("blog_cfg")
+	sql, args := sb.Where(sb.E("id", row.ID)).Build()
+	result := c.DB.MustExecContext(*c.Ctx, sql, args...)
+	ra, err := result.RowsAffected()
+
+	srv.IsPanic(err)
+	if ra <= 0 {panic("要删除的数据不存在！")}
 }
