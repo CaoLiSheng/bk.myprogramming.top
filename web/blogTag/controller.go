@@ -10,14 +10,14 @@ import (
 
 func List(c *gin.Context) {
 	srv.Do(c, srv.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
-		data := make(BlogTags, 0)
+		data := make(BlogTagRows, 0)
 		data.ListBlogTags(c)
 		return &srv.Result{Code: http.StatusOK, Results: data}
 	})
 }
 
 func Add(c *gin.Context) {
-	row := new(AddBlogTag)
+	row := new(AddBlogTagRow)
 	if srv.BadRequest(c, row) {return}
 
 	srv.Do(c, srv.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
@@ -27,7 +27,7 @@ func Add(c *gin.Context) {
 }
 
 func Remove(c *gin.Context) {
-	row := new(BlogTagID)
+	row := new(BlogTagRowID)
 	if srv.BadRequest(c, row) {return}
 
 	srv.Do(c, srv.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
@@ -37,7 +37,7 @@ func Remove(c *gin.Context) {
 }
 
 func Modify(c *gin.Context) {
-	row := new(BlogTag)
+	row := new(BlogTagRow)
 	if srv.BadRequest(c, row) {return}
 
 	srv.Do(c, srv.NewJobOpts(true, true), func(c *db.Core) *srv.Result {

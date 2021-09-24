@@ -59,9 +59,9 @@ func Solid(c *gin.Context) {
 			dir = (&BlogDirRowId{ID: dir.PID}).GetBlogDir(c)
 			path = "/" + dir.Name + path
 		}
-		postBase := (&blogCfg.BlogCfgRowId{ID: "post_base"}).GetBlogCfg(c)
-
-		srv.IsPanic(os.MkdirAll(postBase + path, os.ModePerm))
+		
+		blogCfgDict := blogCfg.BlogCfgDictIDs{"post_base"}.GetBlogCfg(c)
+		srv.IsPanic(os.MkdirAll(blogCfgDict["post_base"] + path, os.ModePerm))
 
 		return &srv.Result{Code: http.StatusOK}
 	})

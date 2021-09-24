@@ -10,7 +10,7 @@ import (
 
 func List(c *gin.Context) {
 	srv.Do(c, srv.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
-		data := make(BlogCfgRows, 0)
+		data := make(BlogCfgDict)
 		data.ListBlogCfg(c)
 		return &srv.Result{Code: http.StatusOK, Results: data}
 	})

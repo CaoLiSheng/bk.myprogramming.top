@@ -6,20 +6,20 @@ import (
 	"github.com/huandu/go-sqlbuilder"
 )
 
-func (data *BlogTags) ListBlogTags(c *db.Core) {
+func (data *BlogTagRows) ListBlogTags(c *db.Core) {
 	sql, args := sqlbuilder.NewSelectBuilder().Select("*").From("blog_tag").Build()
 	rows, err := c.DB.QueryxContext(*c.Ctx, sql, args...)
 
 	srv.IsPanic(err)
 
 	for rows.Next() {
-		var row BlogTag
+		var row BlogTagRow
 		srv.IsPanic(rows.StructScan(&row))
 		*data = append(*data, row)
 	}
 }
 
-func (row *AddBlogTag) AddBlogTag(c *db.Core) {
+func (row *AddBlogTagRow) AddBlogTag(c *db.Core) {
 	sql, args := sqlbuilder.NewInsertBuilder().InsertInto("blog_tag").Cols("name").Values(row.Name).Build()
 	result := c.DB.MustExecContext(*c.Ctx, sql, args...)
 	id, err := result.LastInsertId()
@@ -29,7 +29,7 @@ func (row *AddBlogTag) AddBlogTag(c *db.Core) {
 	row.ID = id
 }
 
-func (row *BlogTagID) RemoveBlogTag(c *db.Core) {
+func (row *BlogTagRowID) RemoveBlogTag(c *db.Core) {
 	sb := sqlbuilder.NewDeleteBuilder().DeleteFrom("blog_tag")
 	sql, args := sb.Where(sb.E("id", row.ID)).Build()
 	result := c.DB.MustExecContext(*c.Ctx, sql, args...)
@@ -39,7 +39,7 @@ func (row *BlogTagID) RemoveBlogTag(c *db.Core) {
 	if ra <= 0 {panic(db.RemoveErr)}
 }
 
-func (row *BlogTag) ModifyBlogTag(c *db.Core) {
+func (row *BlogTagRow) ModifyBlogTag(c *db.Core) {
 	sb := sqlbuilder.NewUpdateBuilder().Update("blog_tag")
 	sql, args := sb.Set(sb.Assign("name", row.Name)).Where(sb.E("id", row.ID)).Build()
 	result := c.DB.MustExecContext(*c.Ctx, sql, args...)

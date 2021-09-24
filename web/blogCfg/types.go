@@ -5,7 +5,9 @@ type BlogCfgRow struct {
 	Cfg string `db:"cfg" json:"cfg" form:"cfg" binding:"required"`
 }
 
-type BlogCfgRows []BlogCfgRow
+type BlogCfgDictIDs []string
+
+type BlogCfgDict map[string]string
 
 type BlogCfgRowId struct {
 	ID string `form:"id" binding:"required"`
