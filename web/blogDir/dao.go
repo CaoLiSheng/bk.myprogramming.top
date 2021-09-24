@@ -37,7 +37,7 @@ func (row *BlogDirRowId) RemoveBlogDir(c *db.Core) {
 	ra, err := result.RowsAffected()
 
 	srv.IsPanic(err)
-	if ra <= 0 {panic("要删除的数据不存在！")}
+	if ra <= 0 {panic(db.RemoveErr)}
 }
 
 func (row *BlogDirRow) ModifyBlogDir(c *db.Core) {
@@ -48,7 +48,7 @@ func (row *BlogDirRow) ModifyBlogDir(c *db.Core) {
 	ra, err := result.RowsAffected()
 
 	srv.IsPanic(err)
-	if ra <= 0 {panic("要修改的数据不存在！")}
+	if ra <= 0 {panic(db.UpdateErr)}
 }
 
 func (row *BlogDirRowId) GetBlogDir(c *db.Core) *BlogDirRow {

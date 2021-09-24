@@ -35,7 +35,7 @@ func (row *BlogCfgRow) ReplaceBlogCfg(c *db.Core) {
 	ra, err := result.RowsAffected()
 
 	srv.IsPanic(err)
-	if ra <= 0 {panic("数据更新失败！")}
+	if ra <= 0 {panic(db.UpdateErr)}
 }
 
 func (row *BlogCfgRowId) RemoveBlogCfg(c *db.Core) {
@@ -45,5 +45,5 @@ func (row *BlogCfgRowId) RemoveBlogCfg(c *db.Core) {
 	ra, err := result.RowsAffected()
 
 	srv.IsPanic(err)
-	if ra <= 0 {panic("要删除的数据不存在！")}
+	if ra <= 0 {panic(db.RemoveErr)}
 }

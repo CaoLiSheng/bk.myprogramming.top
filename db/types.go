@@ -33,3 +33,8 @@ type PageReq struct {
 type PageRes struct {
 	TotalRecords int64 `db:"total" json:"total"`
 }
+
+type SimpleErr string
+
+var UpdateErr SimpleErr = "数据更新失败！"
+var RemoveErr SimpleErr = "要删除的数据不存在！"
