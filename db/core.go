@@ -66,6 +66,14 @@ func (c *Core) DoSimple(opts *JobOptions) {
 	opts.Job(&Core{DB: c.DB, Ctx: &ctx})
 }
 
+func (c *Core) MustExec(sql string, args... interface{}) sql.Result {
+	if c.Txm != nil {
+		return c.Txm.MustExecContext(*c.Ctx, sql, args...)
+	} else {
+		return c.DB.MustExecContext(*c.Ctx, sql, args...)
+	}
+}
+
 func NewJobOpts(job Job, fail Fail) *JobOptions {
 	return &JobOptions{ Timeout: 5 * time.Second, TxOpts: &sql.TxOptions{}, Job: job, Fail: fail }
 }

@@ -20,8 +20,8 @@ func (data *BlogTagRows) ListBlogTags(c *db.Core) {
 }
 
 func (row *AddBlogTagRow) AddBlogTag(c *db.Core) {
-	sql, args := sqlbuilder.NewInsertBuilder().InsertInto("blog_tag").Cols("name").Values(row.Name).Build()
-	result := c.DB.MustExecContext(*c.Ctx, sql, args...)
+	sql, args := sqlbuilder.NewInsertBuilder().InsertInto("blog_tag").Cols("name", "alias").Values(row.Name, row.Alias).Build()
+	result := c.MustExec(sql, args...)
 	id, err := result.LastInsertId()
 
 	srv.IsPanic(err)
@@ -32,7 +32,7 @@ func (row *AddBlogTagRow) AddBlogTag(c *db.Core) {
 func (row *BlogTagRowID) RemoveBlogTag(c *db.Core) {
 	sb := sqlbuilder.NewDeleteBuilder().DeleteFrom("blog_tag")
 	sql, args := sb.Where(sb.E("id", row.ID)).Build()
-	result := c.DB.MustExecContext(*c.Ctx, sql, args...)
+	result := c.MustExec(sql, args...)
 	ra, err := result.RowsAffected()
 
 	srv.IsPanic(err)
@@ -41,8 +41,8 @@ func (row *BlogTagRowID) RemoveBlogTag(c *db.Core) {
 
 func (row *BlogTagRow) ModifyBlogTag(c *db.Core) {
 	sb := sqlbuilder.NewUpdateBuilder().Update("blog_tag")
-	sql, args := sb.Set(sb.Assign("name", row.Name)).Where(sb.E("id", row.ID)).Build()
-	result := c.DB.MustExecContext(*c.Ctx, sql, args...)
+	sql, args := sb.Set(sb.Assign("name", row.Name), sb.Assign("alias", row.Alias)).Where(sb.E("id", row.ID)).Build()
+	result := c.MustExec(sql, args...)
 	ra, err := result.RowsAffected()
 
 	srv.IsPanic(err)

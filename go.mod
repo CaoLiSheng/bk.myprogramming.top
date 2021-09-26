@@ -10,5 +10,6 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/huandu/go-sqlbuilder v1.13.0
 	github.com/jmoiron/sqlx v1.3.4 // indirect
+	github.com/mozillazg/go-pinyin v0.18.0
 	github.com/pingcap/errors v0.11.4
 )

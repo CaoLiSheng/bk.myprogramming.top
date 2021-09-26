@@ -42,7 +42,7 @@ func (rows BlogCfgDictIDs) GetBlogCfg(c *db.Core) BlogCfgDict {
 
 func (row *BlogCfgRow) ReplaceBlogCfg(c *db.Core) {
 	sql, args := sqlbuilder.NewInsertBuilder().ReplaceInto("blog_cfg").Cols("id", "cfg").Values(row.ID, row.Cfg).Build()
-	result := c.DB.MustExecContext(*c.Ctx, sql, args...)
+	result := c.MustExec(sql, args...)
 	ra, err := result.RowsAffected()
 
 	srv.IsPanic(err)
@@ -52,7 +52,7 @@ func (row *BlogCfgRow) ReplaceBlogCfg(c *db.Core) {
 func (row *BlogCfgRowId) RemoveBlogCfg(c *db.Core) {
 	sb := sqlbuilder.NewDeleteBuilder().DeleteFrom("blog_cfg")
 	sql, args := sb.Where(sb.E("id", row.ID)).Build()
-	result := c.DB.MustExecContext(*c.Ctx, sql, args...)
+	result := c.MustExec(sql, args...)
 	ra, err := result.RowsAffected()
 
 	srv.IsPanic(err)

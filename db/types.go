@@ -36,5 +36,6 @@ type PageRes struct {
 
 type SimpleErr string
 
-var UpdateErr SimpleErr = "数据更新失败！"
-var RemoveErr SimpleErr = "要删除的数据不存在！"
+const InsertErr SimpleErr = "数据添加失败！"
+const UpdateErr SimpleErr = "数据更新失败！"
+const RemoveErr SimpleErr = "要删除的数据不存在！"

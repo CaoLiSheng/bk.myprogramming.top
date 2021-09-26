@@ -4,6 +4,7 @@ import (
 	srv "bk.myprogramming.top/server"
 	"bk.myprogramming.top/web/blogCfg"
 	"bk.myprogramming.top/web/blogDir"
+	"bk.myprogramming.top/web/blogPost"
 	"bk.myprogramming.top/web/blogTag"
 	"bk.myprogramming.top/web/test"
 
@@ -34,5 +35,12 @@ func Setup(e *gin.Engine) {
 		super.POST("/tag/add", blogTag.Add)
 		super.POST("/tag/remove", blogTag.Remove)
 		super.POST("/tag/modify", blogTag.Modify)
+
+		super.GET("/post/list", blogPost.List)
+		super.POST("/post/add", blogPost.Add)
+		super.POST("/post/modify", blogPost.Modify)
+		super.POST("/post/tag/bind", blogPost.BindTag)
+		super.POST("/post/tag/unbind", blogPost.UnbindTag)
+		super.POST("/post/save", blogPost.Save)
 	}
 }

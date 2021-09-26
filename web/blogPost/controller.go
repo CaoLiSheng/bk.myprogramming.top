@@ -1,4 +1,4 @@
-package blogDir
+package blogPost
 
 import (
 	"net/http"
@@ -12,51 +12,67 @@ import (
 
 func List(c *gin.Context) {
 	srv.Do(c, srv.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
-		data := make(BlogDirRows, 0)
-		data.ListBlogDir(c)
+		data := make(BlogPostRows, 0)
+		data.ListBlogPost(c)
 		return &srv.Result{Code: http.StatusOK, Results: data}
 	})
 }
 
 func Add(c *gin.Context) {
-	row := new(AddBlogDirRow)
+	row := new(AddBlogPostRow)
 	if srv.BadRequest(c, row) {return}
 
 	srv.Do(c, srv.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
-		row.AddBlogDir(c)
+		row.AddBlogPost(c)
 		return &srv.Result{Code: http.StatusOK, Results: row}
 	})
 }
 
-func Remove(c *gin.Context) {
-	row := new(BlogDirRowId)
-	if srv.BadRequest(c, row) {return}
-
-	srv.Do(c, srv.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
-		row.RemoveBlogDir(c)
-		return &srv.Result{Code: http.StatusOK}
-	})
-}
-
 func Modify(c *gin.Context) {
-	row := new(BlogDirRow)
+	row := new(ModifyBlogPostRow)
+	if srv.BadRequest(c, row) {return}
+	
+	srv.Do(c, srv.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
+		row.ModifyBlogPost(c)
+		return &srv.Result{Code: http.StatusOK, Results: row}
+	})
+}
+
+func BindTag(c *gin.Context) {
+	row := new(BlogPostTagRow)
 	if srv.BadRequest(c, row) {return}
 
 	srv.Do(c, srv.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
-		row.ModifyBlogDir(c)
+		row.BindPostTag(c)
 		return &srv.Result{Code: http.StatusOK}
 	})
 }
 
-func Solid(c *gin.Context) {
-	row := new(BlogDirRowId)
+func UnbindTag(c *gin.Context) {
+	row := new(BlogPostTagRow)
 	if srv.BadRequest(c, row) {return}
 
 	srv.Do(c, srv.NewJobOpts(true, true), func(c *db.Core) *srv.Result {
-		path := row.GetBlogDirPath(c)
-		blogCfgDict := blogCfg.BlogCfgDictIDs{"post_base"}.GetBlogCfg(c)
-		srv.IsPanic(os.MkdirAll(blogCfgDict["post_base"] + path, os.ModePerm))
+		row.UnbindPostTag(c)
+		return &srv.Result{Code: http.StatusOK}
+	})
+}
 
-		return &srv.Result{Code: http.StatusOK, Results: path}
+func Save(c *gin.Context) {
+	form := new(BlogPostSaveForm)
+	if srv.BadRequest(c, form) {return}
+
+	srv.Do(c, srv.NewJobOpts(false, true), func(c *db.Core) *srv.Result {
+		path := form.RefreshAndGetPath(c)
+		blogCfgDict := blogCfg.BlogCfgDictIDs{"post_base"}.GetBlogCfg(c)
+		filePath := blogCfgDict["post_base"] + "/" + path
+		
+		f, err := os.OpenFile(filePath, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
+		srv.IsPanic(err)
+
+		_, err = f.WriteString(form.Content)
+		srv.IsPanic(err)
+
+		return &srv.Result{Code: http.StatusOK}
 	})
 }
