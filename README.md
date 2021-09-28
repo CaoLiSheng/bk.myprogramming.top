@@ -26,5 +26,6 @@ a boilerplate template repository for go-gin.
 │     │  └─ init.go
 │     └─ controller
 │        └─ init.go
+├─ tools
 └─ tests
 ```
